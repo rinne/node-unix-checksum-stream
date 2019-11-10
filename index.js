@@ -3,6 +3,8 @@
 const uc = require('unix-checksum');
 const Writable = require('readable-stream').Writable;
 
+const Hash = require('./hash.js');
+
 class UnixChecksumStream extends Writable {
 	constructor(algorithm, writableStreamOptions) {
 		super(writableStreamOptions);
@@ -23,7 +25,7 @@ class UnixChecksumStream extends Writable {
 			this.cs = new uc.CRC32C();
 			break;
 		default:
-			throw new Error('Unsupported checksum algorithm');
+			this.cs = new Hash(algorithm);
 		};
 	}
 

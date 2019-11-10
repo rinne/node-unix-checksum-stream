@@ -1,6 +1,6 @@
 {
 	"name": "unix-checksum-stream",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Stream wrapper over unix-checksum",
 	"main": "index.js",
 	"scripts": {
@@ -11,7 +11,8 @@
 	},
 	"dependencies": {
 		"unix-checksum": "^3.0.0",
-		"readable-stream": "^3.4.0"
+		"readable-stream": "^3.4.0",
+		"readable-test-data-stream": "^0.1.0"
 	},
 	"repository": {
 		"type": "git",
@@ -27,7 +28,16 @@
 		"unix",
 		"legacy",
 		"stream",
-		"pipe"
+		"pipe",
+		"digest",
+		"MD5",
+		"SHA",
+		"SHA-1",
+		"sha1",
+		"SHA-256",
+		"sha256",
+		"SHA-512",
+		"sha512"
 	],
 	"author": {
 		"name": "Timo J. Rinne",
