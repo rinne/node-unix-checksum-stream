@@ -43,6 +43,16 @@ digest() method on the object after 'digest' (or 'finish') event has
 been received. Unlike crypto module hashes, this module allows
 multiple calls to digest() method.
 
+UnixChecksumStream.algorithms()
+-------------------------------
+
+Returns an array of strings consisting of supported algorithms.
+
+UnixChecksumStream.encodings()
+------------------------------
+
+Returns an array of strings consisting of supported digest encodings.
+
 
 Promise API
 ===========
