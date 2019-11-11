@@ -176,6 +176,21 @@ $ ./sha256 GPL-2.0.TXT
 GPL-2.0.TXT: 8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643
 ```
 
+It is possble to hash files as well as strings. Check out for the difference.
+
+```
+$ digest -a crc32 -e hex -s GPL-2.0.TXT -f GPL-2.0.TXT
+"GPL-2.0.TXT": e172c837
+GPL-2.0.TXT: 4e46f4a1
+
+$ cat GPL-2.0.TXT | ./digest -a crc32 -e hex
+<stdin>: 4e46f4a1
+
+$ echo -n GPL-2.0.TXT | ./digest -a crc32 -e hex
+<stdin>: e172c837
+```
+
+
 Disclaimer
 ==========
 
