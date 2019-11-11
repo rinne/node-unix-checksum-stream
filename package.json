@@ -1,7 +1,7 @@
 {
 	"name": "unix-checksum-stream",
-	"version": "0.1.0",
-	"description": "Stream wrapper over unix-checksum",
+	"version": "1.0.0",
+	"description": "Stream and promise wrapper over unix-checksum and crypto hashes",
 	"main": "index.js",
 	"scripts": {
 		"test": "node ./test/test.js"
@@ -28,6 +28,7 @@
 		"unix",
 		"legacy",
 		"stream",
+		"promise",
 		"pipe",
 		"digest",
 		"MD5",
