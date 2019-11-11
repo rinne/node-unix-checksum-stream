@@ -1,4 +1,7 @@
+#! /usr/bin/env node
 'use strict';
+
+const path = require('path');
 
 const Optist = require('optist');
 const ou = require('optist/util');
@@ -12,7 +15,6 @@ var opt = ((new Optist())
 		   .opts([ { shortName: 'a',
 					 longName: 'algorithm',
 					 description: 'Hash algorithm to use.',
-					 required: true,
 					 hasArg: true,
 					 optArgCb: ou.allowListCbFactory(UnixChecksumStream.algorithms()) },
 				   { shortName: 'e',
@@ -23,29 +25,61 @@ var opt = ((new Optist())
 					 longName: 'string',
 					 hasArg: true,
 					 multi: true },
+				   { shortName: 'f',
+					 longName: 'file',
+					 hasArg: true,
+					 multi: true },
+				   { shortName: 'S',
+					 longName: 'hash-strings',
+					 conflictsWith: 'hash-files' },
+				   { shortName: 'F',
+					 longName: 'hash-files',
+					 conflictsWith: 'hash-strings' },
 				   { shortName: 'c',
 					 longName: 'compact' },
 				   { shortName: 'E',
 					 longName: 'list-digest-encodings' },
 				   { shortName: 'A',
 					 longName: 'list-algorithms' } ])
-		   .help('trdigest')
+		   .help(path.basename(process.argv[1]))
 		   .parse());
 
-(function(filenames) {
+(function(rest) {
 	var strings = opt.value('string');
+	var files = opt.value('file');
 	var errors = 0;
 	var p = [];
+	var algorithm = (opt.value('algorithm') ? opt.value('algorithm') : path.basename(process.argv[1]));
+
 	if (opt.value('list-digest-encodings') || opt.value('list-algorithms')) {
 		if (opt.value('list-algorithms')) {
-			console.log('algorithms: ' + UnixChecksumStream.algorithms().join(', '));
+			if (opt.value('compact')) {
+				console.log(UnixChecksumStream.algorithms().join("\n"));
+			} else {
+				console.log('algorithms: ' + UnixChecksumStream.algorithms().join(', '));
+			}
 		}
 		if (opt.value('list-digest-encodings')) {
-			console.log('digest encodings: ' + UnixChecksumStream.encodings().join(', '));
+			if (opt.value('compact')) {
+				console.log(UnixChecksumStream.encodings().join("\n"));
+			} else {
+				console.log('digest encodings: ' + UnixChecksumStream.encodings().join(', '));
+			}
 		}
 		process.exit(0);
 	}
-	function handlerFactory(name) {
+	if (UnixChecksumStream.algorithms().indexOf(algorithm) < 0) {
+		console.log('Error: Explicit --algorithm option is required');
+		opt.showHelpAndExit(1)
+	}
+	if (rest.length > 0) {
+		if (opt.value('hash-strings')) {
+			strings = strings.concat(rest);
+		} else {
+			files = strings.concat(rest);
+		}
+	}
+	function resultHandlerFactory(name) {
 		return function(ret) {
 			if (ret instanceof Error) {
 				if (opt.value('compact')) {
@@ -65,21 +99,21 @@ var opt = ((new Optist())
 			}
 		}
 	};
-	if ((strings.length == 0) && (filenames.length == 0)) {
-		let handler = handlerFactory('<stdin>');
-		p.push(ph.stream(process.stdin, opt.value('algorithm'), opt.value('digest-encoding'))
+	if ((strings.length == 0) && (files.length == 0)) {
+		let handler = resultHandlerFactory('<stdin>');
+		p.push(ph.stream(process.stdin, algorithm, opt.value('digest-encoding'))
 			   .then(handler)
 			   .catch(handler));
 	}
 	strings.forEach(function(s) {
-		let handler = handlerFactory('"' + s + '"');
-		p.push(ph.data(s, opt.value('algorithm'), opt.value('digest-encoding'))
+		let handler = resultHandlerFactory('"' + s + '"');
+		p.push(ph.data(s, algorithm, opt.value('digest-encoding'))
 			   .then(handler)
 			   .catch(handler));
 	});
-	filenames.forEach(function(f) {
-		let handler = handlerFactory(f);
-		p.push(ph.file(f, opt.value('algorithm'), opt.value('digest-encoding'))
+	files.forEach(function(f) {
+		let handler = resultHandlerFactory(f);
+		p.push(ph.file(f, algorithm, opt.value('digest-encoding'))
 			   .then(handler)
 			   .catch(handler));
 	});
