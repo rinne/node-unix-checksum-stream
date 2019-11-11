@@ -11,9 +11,11 @@ class UnixChecksumStream extends Writable {
 		super(writableStreamOptions);
 		switch (algorithm) {
 		case 'bsdsum':
+		case 'sum-bsd':
 			this.cs = new uc.BsdSum();
 			break;
 		case 'sysvsum':
+		case 'sum-sysv':
 			this.cs = new uc.SysvSum();
 			break;
 		case 'cksum':
@@ -31,7 +33,7 @@ class UnixChecksumStream extends Writable {
 	}
 
 	static algorithms() {
-		return (['bsdsum', 'sysvsum', 'cksum', 'crc32', 'crc32c']).concat(crypto.getHashes());
+		return (['bsdsum', 'sysvsum', 'cksum', 'crc32', 'crc32c', 'sum-bsd', 'sum-sysv' ]).concat(crypto.getHashes());
 	}
 
 	static encodings() {

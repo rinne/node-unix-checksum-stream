@@ -75,8 +75,14 @@ var opt = ((new Optist())
 		process.exit(0);
 	}
 	if (UnixChecksumStream.algorithms().indexOf(algorithm) < 0) {
-		console.log('Error: Explicit --algorithm option is required');
-		opt.showHelpAndExit(1)
+		let m;
+		if (m = algorithm.match(/^([a-zA-Z0-9]+-)(.*)$/)) {
+			algorithm = m[2];
+		}
+		if (UnixChecksumStream.algorithms().indexOf(algorithm) < 0) {
+			console.log('Error: Explicit --algorithm option is required');
+			opt.showHelpAndExit(1)
+		}
 	}
 	if (rest.length > 0) {
 		if (opt.value('hash-strings')) {
