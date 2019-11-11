@@ -129,6 +129,53 @@ const ph = require('unix-checksum-stream/promise');
 ```
 
 
+Command Line
+============
+
+This package contains also a kick-ass command line interface for
+creating checksums from files, strings and standard input.
+
+```
+Usage:
+  digest [<opt> ...] [<param> ...]
+  Options:
+    -a <arg>  --algorithm=<arg>         Hash algorithm to use
+    -e <arg>  --digest-encoding=<arg>   Digest encoding to use
+    -s <arg>  --string=<arg>            Hash a string
+    -f <arg>  --file=<arg>              Hash a file
+    -S        --hash-strings            Extra command line arguments are strings
+    -F        --hash-files              Extra command line arguments are filenames
+    -c        --compact                 Generate compact output
+    -E        --list-digest-encodings
+    -A        --list-algorithms
+    -h        --help                    Show help and exit
+```
+
+The command executable file can be linked to a filename that is one of
+the supported hash algorithm names, such as cksum or sha256, in which
+case the hash algorithm automatically defaults to that particular
+algorithm. Otherwise algorithm must be passed explicitly at command
+line.
+
+Output maintans the command line order with the exception that hashed
+strings are always printed before hashed files in case both are
+present in the command line.
+
+If no files or strings are submitted, then the hash is calculated over
+standard input.
+
+```
+$ digest -a md5 GPL-2.0.TXT
+GPL-2.0.TXT: b234ee4d69f5fce4486a80fdaf4a4263
+
+$ digest -a cksum GPL-2.0.TXT
+GPL-2.0.TXT: 2811767965
+
+$ ln -s digest sha256
+$ ./sha256 GPL-2.0.TXT
+GPL-2.0.TXT: 8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643
+```
+
 Disclaimer
 ==========
 

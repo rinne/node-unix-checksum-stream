@@ -19,24 +19,30 @@ var opt = ((new Optist())
 					 optArgCb: ou.allowListCbFactory(UnixChecksumStream.algorithms()) },
 				   { shortName: 'e',
 					 longName: 'digest-encoding',
+					 description: 'Digest encoding to use.',
 					 hasArg: true,
 					 optArgCb: ou.allowListCbFactory(UnixChecksumStream.encodings()) },
 				   { shortName: 's',
 					 longName: 'string',
+					 description: 'Hash a string.',
 					 hasArg: true,
 					 multi: true },
 				   { shortName: 'f',
 					 longName: 'file',
+					 description: 'Hash a file.',
 					 hasArg: true,
 					 multi: true },
 				   { shortName: 'S',
 					 longName: 'hash-strings',
+					 description: 'Extra command line arguments are strings.',
 					 conflictsWith: 'hash-files' },
 				   { shortName: 'F',
 					 longName: 'hash-files',
+					 description: 'Extra command line arguments are filenames.',
 					 conflictsWith: 'hash-strings' },
 				   { shortName: 'c',
-					 longName: 'compact' },
+					 longName: 'compact',
+					 description: 'Generate compact output.' },
 				   { shortName: 'E',
 					 longName: 'list-digest-encodings' },
 				   { shortName: 'A',
@@ -93,9 +99,9 @@ var opt = ((new Optist())
 				ret = ret.toString('hex');
 			}
 			if (opt.value('compact')) {
-				console.log(ret);
+				return ret;
 			} else {
-				console.log(name + ': ' + ret);
+				return (name + ': ' + ret);
 			}
 		}
 	};
@@ -118,7 +124,10 @@ var opt = ((new Optist())
 			   .catch(handler));
 	});
 	(Promise.all(p)
-	 .then(function() {
+	 .then(function(ret) {
+		 ret.forEach(function(s) {
+			 console.log(s);
+		 });
 		 process.exit((errors > 0) ? 1 : 0);
 	 })
 	 .catch(function(e) {
