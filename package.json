@@ -1,6 +1,6 @@
 {
 	"name": "unix-checksum-stream",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Stream and promise wrapper over unix-checksum and crypto hashes",
 	"main": "index.js",
 	"scripts": {
@@ -12,6 +12,7 @@
 	"dependencies": {
 		"unix-checksum": "^3.0.0",
 		"readable-stream": "^3.4.0",
+		"optist": "^1.0.5",
 		"readable-test-data-stream": "^0.1.0"
 	},
 	"repository": {

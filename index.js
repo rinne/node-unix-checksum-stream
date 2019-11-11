@@ -1,5 +1,6 @@
 "use strict";
 
+const crypto = require('crypto');
 const uc = require('unix-checksum');
 const Writable = require('readable-stream').Writable;
 
@@ -29,6 +30,14 @@ class UnixChecksumStream extends Writable {
 		};
 	}
 
+	static algorithms() {
+		return (['bsdsum', 'sysvsum', 'cksum', 'crc32', 'crc32c']).concat(crypto.getHashes());
+	}
+
+	static encodings() {
+		return [ 'hex', 'base64', 'number' ];
+	}
+	
 	_write(d, encoding, cb) {
 		if (d) {
 			if (typeof(d) === 'string') {
