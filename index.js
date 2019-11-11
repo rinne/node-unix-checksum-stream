@@ -30,6 +30,7 @@ class UnixChecksumStream extends Writable {
 		default:
 			this.cs = new Hash(algorithm);
 		};
+		this.algorithm = algorithm;
 	}
 
 	static algorithms() {
@@ -56,7 +57,40 @@ class UnixChecksumStream extends Writable {
 		this.emit('digest', digest);
 		cb(null);
 	}
-	
+
+	result(digestEncodings) {
+		if (! this.eof) {
+			throw new Error('Unfinished stream');
+		}
+		if (! digestEncodings) {
+			digestEncodings = [ ];
+		} else if (typeof(digestEncodings) === 'string') {
+			digestEncodings = [ digestEncodings ];
+		} else if (! Array.isArray(digestEncodings)) {
+			throw new Error('Invalid digest encodings');
+		}
+		var result = {
+			algorithm: this.algorithm,
+			digest: this.cs.digest(),
+			digests: {},
+			length: this.cs.length,
+			block: null
+		};
+		if (typeof(this.cs.block) === 'number') {
+			result.block = this.cs.block;
+		} else {
+			delete result.block;
+		}
+		if (digestEncodings.length > 0) {
+			digestEncodings.forEach(function(enc) {
+				result.digests[enc] = this.cs.digest(enc);
+			}.bind(this));
+		} else {
+			delete result.digests;
+		}
+		return result;
+	}
+
 	digest(encoding) {
 		if (! this.eof) {
 			throw new Error('Unfinished stream');
