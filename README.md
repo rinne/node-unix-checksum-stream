@@ -30,6 +30,7 @@ const UnixChecksumStream = require('unix-checksum-stream');
         console.log(s.digest());
         console.log(s.digest('hex'));
         console.log(s.digest('base64'));
+        console.log(s.result( [ 'hex', 'base64', 'number', 'buffer' ] ));
     });
     f.pipe(s);
 })();
@@ -52,6 +53,30 @@ UnixChecksumStream.encodings()
 ------------------------------
 
 Returns an array of strings consisting of supported digest encodings.
+
+UnixChecksumStream.prototype.digest(digestEncoding)
+---------------------------------------------------
+
+Returns the result digest of the checksum calculation. This interface
+can be called multiple times, but can only be called after
+the stream has ended (i.e. `finish` or `digest` event has been
+received).
+
+digestEncoding is a string specifying a valid encoding. In case this
+is omitted, the default digest specific encoding is used.
+
+UnixChecksumStream.prototype.result(digestEncodings)
+----------------------------------------------------
+
+Returns an object describing the full return value of the checksum
+calculation. This interface can be called multiple times, but can only
+be called after the stream has ended (i.e. `finish` or `digest` event
+has been received).
+
+digestEncodings is either a string or array of strings with valid
+encodings that are to be included into the `digests` property of the
+return object. Property `digest` always contains a default encoding
+for the hash in question.
 
 
 Promise API
