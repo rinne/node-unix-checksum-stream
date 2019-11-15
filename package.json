@@ -32,6 +32,8 @@
 		"promise",
 		"command-line",
 		"pipe",
+		"hash",
+		"MAC",
 		"digest",
 		"MD5",
 		"SHA",
