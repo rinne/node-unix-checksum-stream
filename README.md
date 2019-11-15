@@ -174,16 +174,18 @@ creating checksums from files, strings and standard input.
 Usage:
   digest [<opt> ...] [<param> ...]
   Options:
-    -a <arg>  --algorithm=<arg>         Hash algorithm to use
-    -e <arg>  --digest-encoding=<arg>   Digest encoding to use
-    -s <arg>  --string=<arg>            Hash a string
-    -f <arg>  --file=<arg>              Hash a file
-    -S        --hash-strings            Extra command line arguments are strings
-    -F        --hash-files              Extra command line arguments are filenames
-    -c        --compact                 Generate compact output
+    -a <arg>  --algorithm=<arg>          Hash algorithm to use.
+    -e <arg>  --digest-encoding=<arg>    Digest encoding to use.
+    -m        --multi-algorithm-output   Use output format of multiple algorithms even in case of one.
+    -o        --one-algorithm-output     Use output format of one algorithm even in case of multiple ones.
+    -s <arg>  --string=<arg>             Hash a string.
+    -f <arg>  --file=<arg>               Hash a file.
+    -S        --hash-strings             Extra command line arguments are strings.
+    -F        --hash-files               Extra command line arguments are filenames.
+    -c        --compact                  Generate compact output.
     -E        --list-digest-encodings
     -A        --list-algorithms
-    -h        --help                    Show help and exit
+    -h        --help                     Show help and exit
 ```
 
 The command executable file can be linked to a filename that is one of
@@ -224,6 +226,23 @@ $ cat GPL-2.0.TXT | ./digest -a crc32 -e hex
 $ echo -n GPL-2.0.TXT | ./digest -a crc32 -e hex
 <stdin>: e172c837
 ```
+
+For whatever reason, it is even possible to calculate results using
+multiple algorithms at one go.
+
+```
+./digest -a md5 -a sha1 -a sha256 -a sha384 -a sha512 -s ''
+md5(""): d41d8cd98f00b204e9800998ecf8427e
+sha1(""): da39a3ee5e6b4b0d3255bfef95601890afd80709
+sha256(""): e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+sha384(""): 38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b
+sha512(""): cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e
+```
+
+Option -m forces the output format of multiple algorithms even in the
+situation where only one is provided. Option -o forces output like
+single algorithm even in case of multiple ones, which may be
+confusing.
 
 
 Disclaimer

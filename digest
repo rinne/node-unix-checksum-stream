@@ -16,12 +16,21 @@ var opt = ((new Optist())
 					 longName: 'algorithm',
 					 description: 'Hash algorithm to use.',
 					 hasArg: true,
-					 optArgCb: ou.allowListCbFactory(UnixChecksumStream.algorithms()) },
+					 optArgCb: ou.allowListCbFactory(UnixChecksumStream.getHashes()),
+					 multi: true },
 				   { shortName: 'e',
 					 longName: 'digest-encoding',
 					 description: 'Digest encoding to use.',
 					 hasArg: true,
-					 optArgCb: ou.allowListCbFactory(UnixChecksumStream.encodings()) },
+					 optArgCb: ou.allowListCbFactory(UnixChecksumStream.getDigestEncodings()) },
+				   { shortName: 'm',
+					 longName: 'multi-algorithm-output',
+					 description: 'Use output format of multiple algorithms even in case of one.',
+					 conflictsWith: 'one-algorithm-output' },
+				   { shortName: 'o',
+					 longName: 'one-algorithm-output',
+					 description: 'Use output format of one algorithm even in case of multiple ones (confusing).',
+					 conflictsWith: 'multi-algorithm-output' },
 				   { shortName: 's',
 					 longName: 'string',
 					 description: 'Hash a string.',
@@ -55,7 +64,7 @@ var opt = ((new Optist())
 	var files = opt.value('file');
 	var errors = 0;
 	var p = [];
-	var algorithm = (opt.value('algorithm') ? opt.value('algorithm') : path.basename(process.argv[1]));
+	var algorithms = ((opt.value('algorithm').length > 0) ? opt.value('algorithm') : []);
 
 	if (opt.value('list-digest-encodings') || opt.value('list-algorithms')) {
 		if (opt.value('list-algorithms')) {
@@ -74,15 +83,18 @@ var opt = ((new Optist())
 		}
 		process.exit(0);
 	}
-	if (UnixChecksumStream.algorithms().indexOf(algorithm) < 0) {
-		let m;
-		if (m = algorithm.match(/^([a-zA-Z0-9]+-)(.*)$/)) {
-			algorithm = m[2];
+	if (algorithms.length < 1) {
+		let a = path.basename(process.argv[1]);
+		if (UnixChecksumStream.algorithms().indexOf(a) < 0) {
+			let m;
+			if ((m = a.match(/^([a-zA-Z0-9]+-)(.*)$/)) && (UnixChecksumStream.algorithms().indexOf(m[2]) >= 0)) {
+				a = m[2];
+			} else {
+				console.log('Error: Explicit --algorithm option is required');
+				opt.showHelpAndExit(1)
+			}
 		}
-		if (UnixChecksumStream.algorithms().indexOf(algorithm) < 0) {
-			console.log('Error: Explicit --algorithm option is required');
-			opt.showHelpAndExit(1)
-		}
+		algorithms = [ a ];
 	}
 	if (rest.length > 0) {
 		if (opt.value('hash-strings')) {
@@ -112,22 +124,40 @@ var opt = ((new Optist())
 		}
 	};
 	if ((strings.length == 0) && (files.length == 0)) {
-		let handler = resultHandlerFactory('<stdin>');
-		p.push(ph.stream(process.stdin, algorithm, opt.value('digest-encoding'))
-			   .then(handler)
-			   .catch(handler));
+		algorithms.forEach(function(algorithm) {
+			var name = '<stdin>';
+			if (((algorithms.length > 1) || opt.value('multi-algorithm-output')) && (! opt.value('one-algorithm-output'))) {
+					name = algorithm + '(' + name + ')';
+			}
+			var handler = resultHandlerFactory(name);
+			p.push(ph.stream(process.stdin, algorithm, opt.value('digest-encoding'))
+				   .then(handler)
+				   .catch(handler));
+		});
 	}
 	strings.forEach(function(s) {
-		let handler = resultHandlerFactory('"' + s + '"');
-		p.push(ph.data(s, algorithm, opt.value('digest-encoding'))
-			   .then(handler)
-			   .catch(handler));
+		algorithms.forEach(function(algorithm) {
+			var name = '"' + s + '"';
+			if (((algorithms.length > 1) || opt.value('multi-algorithm-output')) && (! opt.value('one-algorithm-output'))) {
+					name = algorithm + '(' + name + ')';
+			}
+			var handler = resultHandlerFactory(name);
+			p.push(ph.data(s, algorithm, opt.value('digest-encoding'))
+				   .then(handler)
+				   .catch(handler));
+		});
 	});
 	files.forEach(function(f) {
-		let handler = resultHandlerFactory(f);
-		p.push(ph.file(f, algorithm, opt.value('digest-encoding'))
-			   .then(handler)
-			   .catch(handler));
+		algorithms.forEach(function(algorithm) {
+			var name = f;
+			if (((algorithms.length > 1) || opt.value('multi-algorithm-output')) && (! opt.value('one-algorithm-output'))) {
+					name = algorithm + '(' + name + ')';
+			}
+			var handler = resultHandlerFactory(name);
+			p.push(ph.file(f, algorithm, opt.value('digest-encoding'))
+				   .then(handler)
+				   .catch(handler));
+		});
 	});
 	(Promise.all(p)
 	 .then(function(ret) {

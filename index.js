@@ -20,11 +20,11 @@ class UnixChecksumStream extends Writable {
 	}
 
 	static encodings() {
-		uc.getDigestEncodings();
+		return uc.getDigestEncodings();
 	}
 
 	static getDigestEncodings() {
-		uc.getDigestEncodings();
+		return uc.getDigestEncodings();
 	}
 
 	_write(d, encoding, cb) {
