@@ -2,10 +2,10 @@ In a Nutshell
 =============
 
 Stream wrapper around unix-checksum module implementing sum(1) (BSD
-and SysV variants), cksum(1), CRC32 and CRC32C algorithms. Unlike the
-parent module unix-checksum, this module can also make a streamable
-version of all hash algorithms provided by crypto module (e.g. MD5,
-SHA-1, SHA-256, SHA-512 and others).
+and SysV variants), cksum(1), CRC32 and CRC32C algorithms. This
+module can also make a streamable version of all hash algorithms
+provided by crypto module (e.g. MD5, SHA-1, SHA-256, SHA-512 and
+others).
 
 Also a promise based interface is offered for all algorithms
 mentioned.
@@ -47,10 +47,20 @@ multiple calls to digest() method.
 UnixChecksumStream.algorithms()
 -------------------------------
 
+Alias of UnixChecksumStream.getHashes().
+
+UnixChecksumStream.getHashes()
+------------------------------
+
 Returns an array of strings consisting of supported algorithms.
 
 UnixChecksumStream.encodings()
 ------------------------------
+
+Alias of UnixChecksumStream.getDigestEncodings().
+
+UnixChecksumStream.getDigestEncodings()
+---------------------------------------
 
 Returns an array of strings consisting of supported digest encodings.
 

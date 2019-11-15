@@ -4,43 +4,29 @@ const crypto = require('crypto');
 const uc = require('unix-checksum');
 const Writable = require('readable-stream').Writable;
 
-const Hash = require('./hash.js');
-
 class UnixChecksumStream extends Writable {
 	constructor(algorithm, writableStreamOptions) {
 		super(writableStreamOptions);
-		switch (algorithm) {
-		case 'bsdsum':
-		case 'sum-bsd':
-			this.cs = new uc.BsdSum();
-			break;
-		case 'sysvsum':
-		case 'sum-sysv':
-			this.cs = new uc.SysvSum();
-			break;
-		case 'cksum':
-			this.cs = new uc.CkSum();
-			break;
-		case 'crc32':
-			this.cs = new uc.CRC32();
-			break;
-		case 'crc32c':
-			this.cs = new uc.CRC32C();
-			break;
-		default:
-			this.cs = new Hash(algorithm);
-		};
+		this.cs = uc.createHash(algorithm);
 		this.algorithm = algorithm;
 	}
 
 	static algorithms() {
-		return (['bsdsum', 'sysvsum', 'cksum', 'crc32', 'crc32c', 'sum-bsd', 'sum-sysv' ]).concat(crypto.getHashes());
+		return uc.getHashes();
+	}
+	
+	static getHashes() {
+		return uc.getHashes();
 	}
 
 	static encodings() {
-		return [ 'hex', 'base64', 'number' ];
+		uc.getDigestEncodings();
 	}
-	
+
+	static getDigestEncodings() {
+		uc.getDigestEncodings();
+	}
+
 	_write(d, encoding, cb) {
 		if (d) {
 			if (typeof(d) === 'string') {
