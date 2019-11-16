@@ -38,7 +38,7 @@ const UnixChecksumStream = require('unix-checksum-stream');
 
 UnixChecksumStream is a writable stream. Once the stream ends, it
 emits 'digest' event including the checksum as a parameter. For
-checksum algirithms the digest has a numerical value and for hash
+checksum algorithms the digest has a numerical value and for hash
 algorithms it is a buffer.  Other encodings can be retrieved using
 digest() method on the object after 'digest' (or 'finish') event has
 been received. Unlike crypto module hashes, this module allows
