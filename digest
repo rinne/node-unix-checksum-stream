@@ -65,7 +65,8 @@ var opt = ((new Optist())
 	var errors = 0;
 	var p = [];
 	var algorithms = ((opt.value('algorithm').length > 0) ? opt.value('algorithm') : []);
-
+	var encoding = opt.value('digest-encoding') ? opt.value('digest-encoding') : 'default';
+	
 	if (opt.value('list-digest-encodings') || opt.value('list-algorithms')) {
 		if (opt.value('list-algorithms')) {
 			if (opt.value('compact')) {
@@ -130,7 +131,7 @@ var opt = ((new Optist())
 					name = algorithm + '(' + name + ')';
 			}
 			var handler = resultHandlerFactory(name);
-			p.push(ph.stream(process.stdin, algorithm, opt.value('digest-encoding'))
+			p.push(ph.stream(process.stdin, algorithm, encoding)
 				   .then(handler)
 				   .catch(handler));
 		});
@@ -142,7 +143,7 @@ var opt = ((new Optist())
 					name = algorithm + '(' + name + ')';
 			}
 			var handler = resultHandlerFactory(name);
-			p.push(ph.data(s, algorithm, opt.value('digest-encoding'))
+			p.push(ph.data(s, algorithm, encoding)
 				   .then(handler)
 				   .catch(handler));
 		});
@@ -154,7 +155,7 @@ var opt = ((new Optist())
 					name = algorithm + '(' + name + ')';
 			}
 			var handler = resultHandlerFactory(name);
-			p.push(ph.file(f, algorithm, opt.value('digest-encoding'))
+			p.push(ph.file(f, algorithm, encoding)
 				   .then(handler)
 				   .catch(handler));
 		});
