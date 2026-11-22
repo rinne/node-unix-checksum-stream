@@ -12,12 +12,14 @@
 	"dependencies": {
 		"unix-checksum": "^4.4.0",
 		"readable-stream": "^3.6.0",
-		"optist": "^1.0.6",
+		"optist": "^3.0.2"
+	},
+	"devDependencies": {
 		"readable-test-data-stream": "^0.2.0"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com:rinne/node-unix-checksum-stream.git"
+		"url": "git+https://github.com/rinne/node-unix-checksum-stream.git"
 	},
 	"keywords": [
 		"checksum",
