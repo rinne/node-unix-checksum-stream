@@ -168,7 +168,8 @@ Command Line
 ============
 
 This package contains also a kick-ass command line interface for
-creating checksums from files, strings and standard input.
+creating checksums from files, strings and standard input. It needs
+Node.js 20 or newer (the library itself runs on Node.js 8).
 
 ```
 Usage:
