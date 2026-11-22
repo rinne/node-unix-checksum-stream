@@ -1,6 +1,17 @@
 Changelog
 =========
 
+2.7.1
+-----
+
+- `digest`: file names given as plain arguments replaced the files
+  given with `-f`, and strings given with `-s` were also opened as
+  files. Now `-f` files and plain arguments are all hashed as files.
+- unix-checksum 4.4.1: cksum is right for input of 2 GiB or more.
+- README: the 'digest' event, digest() and the promise functions give
+  a buffer when no encoding is given (also for the checksums); the
+  parameters of stream() and data() are named correctly.
+
 2.7.0
 -----
 
