@@ -75,6 +75,34 @@ function testChop(b) {
 	return r;
 };
 
+// The digest command line tool (needs Node.js 20 for optist 3).
+if (parseInt(process.versions.node, 10) >= 20) {
+	const path = require('path');
+	const crypto = require('crypto');
+	const fs = require('fs');
+	const cp = require('child_process');
+	const digest = path.join(__dirname, '..', 'digest');
+	const md5 = function(b) { return crypto.createHash('md5').update(b).digest('hex'); };
+	const f1 = path.join(__dirname, 'test.js');
+	const f2 = path.join(__dirname, 'hashtests.js');
+	const f3 = path.join(__dirname, '..', 'index.js');
+	[
+		[ [ '-f', f1, f2, f3 ],
+		  [ f1, f2, f3 ].map((f) => md5(fs.readFileSync(f))) ],
+		[ [ '-s', 'xyz', f2 ],
+		  [ md5('xyz'), md5(fs.readFileSync(f2)) ] ],
+		[ [ '-S', '-s', 'xyz', 'abc' ],
+		  [ md5('xyz'), md5('abc') ] ]
+	].forEach(function(t) {
+		var r = cp.spawnSync(process.execPath,
+							 [ digest, '-a', 'md5', '-c' ].concat(t[0]),
+							 { encoding: 'utf8' });
+		assert.equal(r.status, 0, 'digest ' + t[0].join(' ') + ': ' + r.stdout + r.stderr);
+		assert.deepEqual(r.stdout.trim().split('\n'), t[1], 'digest ' + t[0].join(' '));
+		tests.completed.cli = (tests.completed.cli ? tests.completed.cli + 1 : 1);
+	});
+}
+
 var first = true;
 function ready() {
 	if (tests.running > 0) {

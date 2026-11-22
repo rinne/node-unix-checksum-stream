@@ -101,7 +101,7 @@ var opt = ((new Optist())
 		if (opt.value('hash-strings')) {
 			strings = strings.concat(rest);
 		} else {
-			files = strings.concat(rest);
+			files = files.concat(rest);
 		}
 	}
 	function resultHandlerFactory(name) {
