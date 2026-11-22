@@ -37,9 +37,9 @@ const UnixChecksumStream = require('unix-checksum-stream');
 ```
 
 UnixChecksumStream is a writable stream. Once the stream ends, it
-emits 'digest' event including the checksum as a parameter. For
-checksum algorithms the digest has a numerical value and for hash
-algorithms it is a buffer.  Other encodings can be retrieved using
+emits 'digest' event including the checksum as a parameter, as a
+buffer (for all algorithms, also for the checksums such as bsdsum or
+crc32). Other encodings can be retrieved using
 digest() method on the object after 'digest' (or 'finish') event has
 been received. Unlike crypto module hashes, this module allows
 multiple calls to digest() method.
@@ -73,7 +73,10 @@ the stream has ended (i.e. `finish` or `digest` event has been
 received).
 
 digestEncoding is a string specifying a valid encoding. In case this
-is omitted, the default digest specific encoding is used.
+is omitted, the digest is returned as a buffer. Encoding 'default'
+gives the algorithm's own default: a number for bsdsum, sysvsum and
+cksum, hexadecimal with a 0x prefix for crc32 and crc32c, and
+hexadecimal for the crypto hashes.
 
 UnixChecksumStream.prototype.result(digestEncodings)
 ----------------------------------------------------
@@ -85,18 +88,18 @@ has been received).
 
 digestEncodings is either a string or array of strings with valid
 encodings that are to be included into the `digests` property of the
-return object. Property `digest` always contains a default encoding
-for the hash in question.
+return object. Property `digest` always contains the digest as a
+buffer.
 
 
 Promise API
 ===========
 
-file(filename, algorighm, digestEncoding)
+file(filename, algorithm, digestEncoding)
 -----------------------------------------
 
 Returns a promise resolving with the checksum value calculated over
-the file contents.
+the file contents. Without digestEncoding, the value is a buffer.
 
 ```
 'use strict';
@@ -114,8 +117,8 @@ const ph = require('unix-checksum-stream/promise');
  }));
 ```
 
-stream(filename, algorighm, digestEncoding)
--------------------------------------------
+stream(stream, algorithm, digestEncoding)
+-----------------------------------------
 
 Returns a promise resolving with the checksum value calculated over
 the data read from the stream.
@@ -136,8 +139,8 @@ const ph = require('unix-checksum-stream/promise');
  }));
 ```
 
-data(filename, algorighm, digestEncoding)
------------------------------------------
+data(data, algorithm, digestEncoding)
+-------------------------------------
 
 Returns a promise resolving with the checksum value calculated over
 the data that can be either a buffer, string, number, boolean, null,
@@ -195,7 +198,7 @@ case the hash algorithm automatically defaults to that particular
 algorithm. Otherwise algorithm must be passed explicitly at command
 line.
 
-Output maintans the command line order with the exception that hashed
+Output maintains the command line order with the exception that hashed
 strings are always printed before hashed files in case both are
 present in the command line.
 
@@ -214,7 +217,7 @@ $ ./sha256 GPL-2.0.TXT
 GPL-2.0.TXT: 8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643
 ```
 
-It is possble to hash files as well as strings. Check out for the difference.
+It is possible to hash files as well as strings. Check out for the difference.
 
 ```
 $ digest -a crc32 -e hex -s GPL-2.0.TXT -f GPL-2.0.TXT
