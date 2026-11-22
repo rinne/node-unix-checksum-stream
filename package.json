@@ -10,7 +10,7 @@
 		"node": ">=8.0.0"
 	},
 	"dependencies": {
-		"unix-checksum": "^4.4.0",
+		"unix-checksum": "^4.4.1",
 		"readable-stream": "^3.6.0",
 		"optist": "^3.0.2"
 	},
