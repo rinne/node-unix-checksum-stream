@@ -2,7 +2,7 @@
 
 const crypto = require('crypto');
 const uc = require('unix-checksum');
-const Writable = require('readable-stream').Writable;
+const Writable = require('stream').Writable;
 
 class UnixChecksumStream extends Writable {
 	constructor(algorithm, writableStreamOptions) {

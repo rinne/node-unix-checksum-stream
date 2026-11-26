@@ -48,6 +48,9 @@ function data(data, algorithm, digestEncoding) {
 		var cb = function(d) {
 			h.write(d);
 		};
+		// Listen before writing: the stream may finish synchronously.
+		h.on('error', error);
+		h.on('digest', digest);
 		try {
 			traverse(data, cb);
 			h.end();
@@ -58,8 +61,6 @@ function data(data, algorithm, digestEncoding) {
 			} catch(e) {
 			}
 		}
-		h.on('error', error);
-		h.on('digest', digest);
 	});
 }
 

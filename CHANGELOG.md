@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+- Uses Node's own stream module instead of readable-stream (was
+  ^3, whose successor needs Node.js 12.22). The library still runs
+  on Node.js 8.
+- `data()` (promise.js) attached its listeners only after ending
+  the stream, so with a stream that finishes synchronously (Node's
+  own stream on Node.js 24 and later) the promise never settled.
+
 2.7.1
 -----
 
